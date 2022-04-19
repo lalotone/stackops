@@ -1,0 +1,60 @@
+- hosts: all
+  remote_user: lalotone
+  become: true
+  tasks:
+    # Block that should run on all nodes, masters and workers
+    - name: Install base system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
+        state: present
+
+    - name: Add Docker Repository for Ubuntu/Debian
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release  | lower}} stable"
+
+    - name: Install Docker packages
+      apt:
+        pkg:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: latest
+        update_cache: true
+
+    - name: Add user to Docker group
+      user:
+        name: "{{ ansible_user }}"
+        group: docker
+
+    - name: Remove swapfile from /etc/fstab
+      mount:
+        name: "{{ item }}"
+        fstype: swap
+        state: absent
+      with_items:
+      - swap
+      - none
+
+    - name: Disable swap
+      command: swapoff -a
+      when: ansible_swaptotal_mb > 0
+
+    # Block that only should run on masters
+    - name: Install HAProxy and Keepalived on master nodes
+      apt:
+        pkg:
+          - haproxy
+          - keepalived
+        state: latest
+        update_cache: true
+      when: "'masters' in group_names"
