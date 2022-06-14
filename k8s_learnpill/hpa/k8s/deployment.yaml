@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hpatest
+  name: hpatest
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hpatest
+  template:
+    metadata:
+      labels:
+        app: hpatest
+    spec:
+      containers:
+      - image: fooser/learnapi:hpa
+        name: learnapi
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "500m"
+          limits:
+            memory: "128Mi"
+            cpu: "1000m"
