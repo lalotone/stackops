@@ -1,5 +1,5 @@
-- hosts: all
-  remote_user: lalotone
+- hosts: k8s
+  remote_user: testing 
   become: true
   tasks:
     # Block that should run on all nodes, masters and workers
@@ -48,13 +48,3 @@
     - name: Disable swap
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
-
-    # Block that only should run on masters
-    - name: Install HAProxy and Keepalived on master nodes
-      apt:
-        pkg:
-          - haproxy
-          - keepalived
-        state: latest
-        update_cache: true
-      when: "'masters' in group_names"

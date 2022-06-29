@@ -1,0 +1,58 @@
+# Ref for this playbook: https://github.com/codylane/ansible-playbook-change-hostname/blob/master/change_hostname.yaml
+- hosts: all
+  remote_user: testing 
+  become: true
+  tasks:
+    - name: Print future hostname for each host
+      debug:
+        msg: "Future hostname: {{ inventory_hostname }}" 
+    
+    - name: Change the hostname to our standard
+      hostname:
+        name: "{{ inventory_hostname }}"
+      when:
+        ansible_fqdn != ansible_ssh_host
+
+    - name: restart machine
+      command: shutdown -r now "Ansible updates triggered"
+      async: 0
+      poll: 0
+      ignore_errors: True
+      when:
+        reboot is defined
+
+    - name: Wait for host
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: 22
+        sleep: 10
+        timeout: 3600 
+      become: false
+      delegate_to: localhost
+    
+    - name: Fix /etc/hosts removing the old hostname
+      tags:
+        - hosts
+      lineinfile:
+        state: present
+        dest: '/etc/hosts'
+        line: "{{ ansible_default_ipv4.address }} {{ inventory_hostname }} {{ ansible_hostname }}"
+        regexp: "^{{ ansible_default_ipv4.address }}"
+      when:
+        ansible_fqdn != inventory_hostname
+
+    - name: Validate ansible_fqdn == inventory_hostname
+      tags:
+        - validate
+      assert:
+        that:
+          ansible_fqdn == inventory_hostname
+    
+    - name: Add IP address of all hosts to all hosts
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '.*{{ item }}$'
+        line: "{{ hostvars[item].ansible_host }} {{item}}"
+        state: present
+      when: hostvars[item].ansible_host is defined
+      with_items: "{{ groups.all }}"

@@ -1,0 +1,13 @@
+- hosts: balancers
+  remote_user: testing 
+  become: true
+  tasks:
+  - name: Install HAProxy and Keepalived on balancer nodes
+    apt:
+      pkg:
+        - haproxy
+        - keepalived
+      state: latest
+      update_cache: true
+  
+  # Steps: Configure keepalived, extract floating IP address, configure HAPROXY to balance between masters (6443)
