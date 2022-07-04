@@ -1,3 +1,5 @@
+# TODO: Fix the checks before joining more nodes, check if tokens are OK and control plane is alive.
+# Fix the kubeconfig
 - hosts: k8s
   remote_user: testing 
   become: true
