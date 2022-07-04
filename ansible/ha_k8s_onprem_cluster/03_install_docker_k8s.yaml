@@ -49,6 +49,16 @@
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
 
+    - name: Prepare cgroup for container engine
+      copy:
+        src: render_configs/cgroup.json
+        dest: /etc/docker/daemon.json
+
+    - name: Restart service haproxy after adding new config
+      service:
+        name: docker
+        state: restarted
+
     - name: Add floating IP to hosts file
       lineinfile:
         dest: /etc/hosts

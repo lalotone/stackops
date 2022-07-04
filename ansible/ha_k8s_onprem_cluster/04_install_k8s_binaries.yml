@@ -28,3 +28,53 @@
     - kubeadm
     - kubectl
     - kubelet
+
+  - name: Prepare control plane on master node 01
+    shell: |
+      sudo kubeadm init --control-plane-endpoint "k8s-ha:6443" --upload-certs --pod-network-cidr=192.168.0.0/16 > /etc/kubernetes/cluster-bootstrap.log
+    when: "'k8s-master1' in inventory_hostname"
+
+    # Add here output for kubeadm init from below
+
+  - name: Register join token master
+    shell: grep -A1 "^kubeadm join" /etc/kubernetes/cluster-bootstrap.log
+    register: r_join_token_command_master
+    changed_when: false
+    ignore_errors: true
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Register join token workers
+    shell: grep -A1 "kubeadm join" /etc/kubernetes/cluster-bootstrap.log | tail -n 2
+    register: r_join_token_command_worker
+    changed_when: false
+    ignore_errors: true
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Print join token command Master
+    debug:
+      msg: "{{ r_join_token_command_master.stdout }}"
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Print join token command Worker
+    debug:
+      msg: "{{ r_join_token_command_worker.stdout }}"
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Ensures /home/{{ ansible_user }}/.kube dir exists
+    file: 
+      path: "/home/{{ ansible_user }}/.kube" 
+      state: directory
+
+  - name: Copy K8s config to use kubectl
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: "/home/{{ ansible_user }}/.kube/config"
+      remote_src: true
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Install Calico as CNI plugin
+    # shell: "kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/manifests/calico.yaml"
+    shell: |
+      kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/archive/v3.16/manifests/tigera-operator.yaml
+      kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/archive/v3.16/manifests/custom-resources.yaml
+    when: "'k8s-master1' in inventory_hostname"
