@@ -10,7 +10,7 @@ terraform {
 
 # instance the provider
 provider "libvirt" {
-  uri = "qemu:///system"
+  uri = "qemu+ssh://nuc:22/system?known_hosts_verify=ignore"
 }
 
 resource "libvirt_pool" "ubuntu" {

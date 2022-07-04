@@ -1,0 +1,23 @@
+# Ref doc: https://betterprogramming.pub/high-availability-ha-load-balancing-lb-kubernetes-k8s-api-alpine-keepalived-haproxy-fe577e40c80
+defaults
+    maxconn 20000
+    mode    tcp
+    option  dontlognull
+    timeout http-request 10s
+    timeout queue        1m
+    timeout connect      10s
+    timeout client       86400s
+    timeout server       86400s
+    timeout tunnel       86400s
+frontend k8s-api
+    bind :::6443 v4v6
+    mode tcp
+    default_backend k8s-api
+backend k8s-api
+    balance roundrobin
+    mode tcp
+    option tcp-check
+    default-server inter 10s downinter 5s rise 2 fall 2 slowstart 60s maxconn 250 maxqueue 256 weight 100
+{% for server in groups['masters'] %}
+    server k8s-{{ loop.index }} {{ server }}:6443 check
+{% endfor %}

@@ -48,3 +48,12 @@
     - name: Disable swap
       command: swapoff -a
       when: ansible_swaptotal_mb > 0
+
+    - name: Add floating IP to hosts file
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '.*{{ item }}$'
+        line: "{{item}} k8s-ha"
+        state: present
+      with_items:
+      - "{{ node_floating_ip_addr }}"

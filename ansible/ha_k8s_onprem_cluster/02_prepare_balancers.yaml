@@ -1,0 +1,48 @@
+- hosts: balancers
+  remote_user: testing 
+  become: true
+  tasks:
+  - name: Install HAProxy and Keepalived on balancer nodes
+    apt:
+      pkg:
+        - haproxy
+        - keepalived
+      state: latest
+      update_cache: true
+
+  - name: Render Keepalived config per node
+    template:
+      src: render_configs/keepalived.j2
+      dest: /etc/keepalived/keepalived.conf
+      owner: root
+  
+  - name: Restart service keepalived after adding new config
+    service:
+      name: keepalived
+      state: restarted
+
+  - name: Wait some seconds before floating IP address works as expected
+    pause:
+      seconds: 5
+
+  - name: "Verify files from keepalived after modifying"
+    shell: |
+      cat /etc/keepalived/keepalived.conf
+    register: file_content
+
+  - name: "Print the file content to a console"
+    debug:
+      msg: "{{ file_content.stdout }}"
+
+  - name: Render Keepalived config per node
+    template:
+      src: render_configs/haproxy.j2
+      dest: /etc/haproxy/haproxy.cfg
+      owner: root
+
+  - name: Restart service haproxy after adding new config
+    service:
+      name: haproxy
+      state: restarted
+  
+  # Steps: Configure keepalived, extract floating IP address, configure HAPROXY to balance between masters (6443)

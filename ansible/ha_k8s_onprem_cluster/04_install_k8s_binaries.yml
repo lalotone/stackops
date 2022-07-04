@@ -1,0 +1,30 @@
+- hosts: k8s
+  remote_user: testing 
+  become: true
+  vars:
+    k8s_version: 1.19.0-00
+  tasks:
+  - name: "Add Google GPG Key"
+    shell: |
+      sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+  - name: Add Kubernetes Repository for Ubuntu/Debian
+    apt_repository:
+      repo: "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main"
+
+  - name: Install K8s packages with specific version
+    apt:
+      pkg:
+        - "kubelet={{ k8s_version }}"
+        - "kubeadm={{ k8s_version }}"
+        - "kubectl={{ k8s_version }}"
+      state: latest
+      update_cache: true
+  - name: Hold kubeadm
+    dpkg_selections:
+      name: "{{ item }}"
+      selection: hold
+    with_items:
+    - kubeadm
+    - kubectl
+    - kubelet
