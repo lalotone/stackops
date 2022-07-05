@@ -54,7 +54,7 @@
         src: render_configs/cgroup.json
         dest: /etc/docker/daemon.json
 
-    - name: Restart service haproxy after adding new config
+    - name: Restart service Docker after adding new config
       service:
         name: docker
         state: restarted
