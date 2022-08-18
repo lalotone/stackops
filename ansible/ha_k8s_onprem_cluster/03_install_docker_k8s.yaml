@@ -1,5 +1,5 @@
 - hosts: k8s
-  remote_user: testing 
+  remote_user: lalotone 
   become: true
   tasks:
     # Block that should run on all nodes, masters and workers
@@ -9,6 +9,7 @@
           - apt-transport-https
           - ca-certificates
           - curl
+          - gnupg
           - software-properties-common
         state: latest
         update_cache: true

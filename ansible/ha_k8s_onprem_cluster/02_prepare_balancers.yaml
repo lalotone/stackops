@@ -1,5 +1,5 @@
 - hosts: balancers
-  remote_user: testing 
+  remote_user: lalotone 
   become: true
   tasks:
   - name: Install HAProxy and Keepalived on balancer nodes

@@ -1,6 +1,6 @@
 # Ref for this playbook: https://github.com/codylane/ansible-playbook-change-hostname/blob/master/change_hostname.yaml
 - hosts: all
-  remote_user: testing 
+  remote_user: lalotone
   become: true
   tasks:
     - name: Print future hostname for each host
@@ -28,7 +28,7 @@
         sleep: 10
         timeout: 3600 
       become: false
-      delegate_to: localhost
+      # delegate_to: localhost
     
     - name: Fix /etc/hosts removing the old hostname
       tags:

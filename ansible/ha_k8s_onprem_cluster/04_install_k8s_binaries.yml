@@ -1,10 +1,10 @@
 # TODO: Fix the checks before joining more nodes, check if tokens are OK and control plane is alive.
 # Fix the kubeconfig
 - hosts: k8s
-  remote_user: testing 
+  remote_user: lalotone 
   become: true
   vars:
-    k8s_version: 1.19.0-00
+    k8s_version: 1.23.0-00
   tasks:
   - name: "Add Google GPG Key"
     shell: |
@@ -88,8 +88,9 @@
   - name: Install Calico as CNI plugin
     # shell: "kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/manifests/calico.yaml"
     shell: |
-      kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/archive/v3.16/manifests/tigera-operator.yaml
-      kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/archive/v3.16/manifests/custom-resources.yaml
+      kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/manifests/calico.yaml
+    # kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/archive/v3.16/manifests/tigera-operator.yaml
+    # kubectl --kubeconfig='/home/{{ ansible_user }}/.kube/config' apply -f https://docs.projectcalico.org/archive/v3.16/manifests/custom-resources.yaml
     when: "'k8s-master1' in inventory_hostname"
 
   - name: Join rest of masters
