@@ -1,0 +1,52 @@
+# Ansible new syntaxs
+- hosts: all
+  # remote_user: lalotone
+  become: true
+  tasks:
+  - name: Install NFS Server on master node
+    ansible.builtin.apt:
+      pkg:
+      - nfs-kernel-server
+      state: present
+      update_cache: true
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Create nfs_share dir on masters
+    ansible.builtin.file:
+      path: /srv/nfs_share
+      state: directory
+      mode: '0755'
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Copy file of NFS config
+    ansible.builtin.copy:
+      src: ./render_configs/exports.j2
+      dest: /etc/exports
+      owner: root
+      group: root
+      mode: '0644'
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Change file ownership, group and permissions
+    ansible.builtin.file:
+      path: /srv/nfs_share
+      owner: nobody
+      group: nogroup
+      mode: '0777'
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Start/check that service NFS is started
+    ansible.builtin.systemd:
+      state: restarted
+      name: nfs-server
+      enabled: yes
+    when: "'k8s-master1' in inventory_hostname"
+
+  - name: Install NFS client packages on worker nodes
+    ansible.builtin.apt:
+      pkg:
+        - nfs-common
+      state: present
+      update_cache: true
+    when: inventory_hostname | regex_search("k8s-worker[1-3]")
+

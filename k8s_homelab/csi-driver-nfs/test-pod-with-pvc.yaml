@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod-pvc
+spec:
+  containers:
+    - name: nginx-pv
+      image: nginx:1.23.1
+      volumeMounts:
+      - mountPath: "/var/www/html"
+        name: nginx-data
+  volumes:
+    - name: nginx-data
+      persistentVolumeClaim:
+        claimName: pvc-nfs-dynamic-testing

@@ -1,0 +1,15 @@
+# First version, but should check how to create a high available NFS server
+# on Kubernetes. Not pointing to exclusive, hardcoded node. 
+# With this, Dynamic volumes will be created.
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-csi-test
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.1.213
+  share: /srv/nfs_share
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
