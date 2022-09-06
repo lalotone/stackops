@@ -158,6 +158,7 @@ persistence:
   ##
   ## Storage class of PV to bind. By default it looks for standard storage class.
   ## If the PV uses a different storage class, specify that here.
+  ## MBM to use NFS StorageClass instead the ""
   storageClass: "nfs-csi-test"
   VolumeName: ""
   accessMode: ReadWriteOnce
@@ -203,6 +204,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+# MBM -> ClusterIP to NodePort
 consoleService:
   type: NodePort
   clusterIP: ~
@@ -257,6 +259,8 @@ podLabels: {}
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
+
+# MBM This was 16Gb
 resources:
   requests:
     memory: 1Gi
