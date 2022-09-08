@@ -1,0 +1,26 @@
+- hosts: k8s
+  remote_user: lalotone 
+  become: true
+  tasks:
+    - name: Add Falco GPG apt Key
+      apt_key:
+        url: https://falco.org/repo/falcosecurity-3672BA8F.asc
+        state: present
+
+    - name: Add Falco Repository for Ubuntu/Debian
+      apt_repository:
+        repo: "deb https://download.falco.org/packages/deb stable main"
+
+    - name: Install Falco package and Linux headers
+      apt:
+        pkg:
+          - "linux-headers-{{ ansible_kernel }}"
+          - falco
+        state: latest
+        update_cache: true
+        
+    - name: Start/check Falco service
+      ansible.builtin.systemd:
+        state: started
+        name: falco
+        enabled: yes

@@ -6,7 +6,9 @@
 - HP Microserver Gen 8 (Celeron, 12Gb RAM, 2Tb RAID5)
 - Zenbook 14 (Ryzen 7, 16Gb RAM, 512 NVMe)
 
-Kubernetes cluster:
+Stable/Long term Kubernetes cluster:
+
+(Terraform/Ubuntu/Ansible cluster WIP for testing)
 
 ![Kubernetes cluster overview](./images/k8s_homelab.png)
 
