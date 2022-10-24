@@ -14,6 +14,6 @@ spec:
       containers:
       - name: test-job
         image: python:3.7.6-alpine3.10
-        command: ['sh', '-c', 'sleep 3600']
+        command: ['sh', '-c', 'sleep 15']
       restartPolicy: OnFailure
       dnsPolicy: ClusterFirst
