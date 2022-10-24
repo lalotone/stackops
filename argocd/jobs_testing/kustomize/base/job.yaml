@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-job
+  labels:
+    app: test-job
+spec:
+  template:
+    metadata:
+      name: test-job
+      labels:
+        app: test-job
+    spec:
+      containers:
+      - name: test-job
+        image: python:3.7.6-alpine3.10
+        command: ['sh', '-c', 'sleep 3600']
+      restartPolicy: OnFailure
+      dnsPolicy: ClusterFirst

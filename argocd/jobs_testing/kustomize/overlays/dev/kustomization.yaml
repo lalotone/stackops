@@ -1,0 +1,9 @@
+namePrefix: dev-
+commonLabels:
+  variant: dev
+resources:
+- ../../base
+# patchesStrategicMerge:
+# - configmap-des.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

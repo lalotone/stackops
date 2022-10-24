@@ -1,3 +1,4 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -7,6 +8,19 @@ spec:
   description: Test project for ArgoCD
   destinations:
   - namespace: helloworld
+    server: https://kubernetes.default.svc
+  sourceRepos:
+  - https://github.com/lalotone/stackops
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: jobs-testing
+  namespace: argocd
+spec:
+  description: Test project for Db Jobs
+  destinations:
+  - namespace: dbjobs
     server: https://kubernetes.default.svc
   sourceRepos:
   - https://github.com/lalotone/stackops
@@ -27,5 +41,24 @@ spec:
     automated: {}
   source:
     path: argocd/nginx_test/kustomize/overlays/dev
+    repoURL: https://github.com/lalotone/stackops
+    targetRevision: main
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    test: "true"
+  name: dbjob-testing
+  namespace: argocd
+spec:
+  destination:
+    namespace: dbjobs
+    server: https://kubernetes.default.svc
+  project: jobs-testing
+  syncPolicy:
+    automated: {}
+  source:
+    path: argocd/jobs_testing/kustomize/overlays/dev
     repoURL: https://github.com/lalotone/stackops
     targetRevision: main
