@@ -26,6 +26,6 @@ spec:
   syncPolicy:
     automated: {}
   source:
-    path: argocd/job_recreate/kustomize/overlays/dev
+    path: argocd/nginx_test/kustomize/overlays/dev
     repoURL: https://github.com/lalotone/stackops
     targetRevision: main
