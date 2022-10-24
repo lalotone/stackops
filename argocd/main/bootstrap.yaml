@@ -57,7 +57,7 @@ spec:
     server: https://kubernetes.default.svc
   project: jobs-testing
   syncPolicy:
-    automated: {}
+    manual: {}
   source:
     path: argocd/jobs_testing/kustomize/overlays/dev
     repoURL: https://github.com/lalotone/stackops
