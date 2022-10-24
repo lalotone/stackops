@@ -26,6 +26,6 @@ spec:
   syncPolicy:
     automated: {}
   source:
-    path: argocd/kustomize/overlays/des
+    path: kustomize/overlays/des
     repoURL: https://github.com/lalotone/stackops
     targetRevision: main
