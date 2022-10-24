@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: helloworld
+  namespace: argocd
+spec:
+  description: Test project for ArgoCD
+  destinations:
+  - namespace: helloworld
+    server: https://kubernetes.default.svc
+  sourceRepos:
+  - https://github.com/lalotone/stackops
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    test: "true"
+  name: helloworld-kustomize
+  namespace: argocd
+spec:
+  destination:
+    namespace: helloworld
+    server: https://kubernetes.default.svc
+  project: helloworld
+  syncPolicy:
+    automated: {}
+  source:
+    path: argocd/kustomize/overlays/des
+    repoURL: https://github.com/lalotone/stackops
+    targetRevision: main
