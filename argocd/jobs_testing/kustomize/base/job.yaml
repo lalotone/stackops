@@ -1,18 +1,18 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-job-5
+  name: testing-job
   labels:
-    app: test-job-5
+    app: testing-job
 spec:
   template:
     metadata:
-      name: test-job-5
+      name: testing-job
       labels:
-        app: test-job-5
+        app: testing-job
     spec:
       containers:
-      - name: test-job-5
+      - name: testing-job
         image: python:3.7.6-alpine3.10
         command: ['sh', '-c', 'sleep 15']
       restartPolicy: OnFailure
