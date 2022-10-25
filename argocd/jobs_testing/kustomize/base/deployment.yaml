@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name:  secegsa-testing-sync
-        image:  nignx:1.17.1-alpine
+        image:  nginx:1.17.1-alpine
         resources:
           requests:
             cpu: 100m
