@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  secegsa-testing-sync
+  labels:
+    app:  secegsa-testing-sync
+spec:
+  selector:
+    matchLabels:
+      app: secegsa-testing-sync
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app:  secegsa-testing-sync
+    spec:
+      containers:
+      - name:  secegsa-testing-sync
+        image:  nignx:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort:  80
+          name:  secegsa-testing-sync
+      restartPolicy: Always
