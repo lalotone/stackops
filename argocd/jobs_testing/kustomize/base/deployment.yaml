@@ -31,5 +31,5 @@ spec:
             memory: 100Mi
         ports:
         - containerPort:  80
-          name:  secegsa_testing_sync
+          name:  secegsa-http
       restartPolicy: Always
