@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app: secegsa-testing-sync
+  revisionHistoryLimit: 2
   replicas: 2
   strategy:
     rollingUpdate:
