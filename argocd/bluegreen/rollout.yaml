@@ -1,4 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
+# Avail images
+# purple
+# green
+# yellow
+# blue
+# orange
+# red
 kind: Rollout
 metadata:
   name: rollout-bluegreen
@@ -15,7 +22,7 @@ spec:
     spec:
       containers:
       - name: rollouts-demo
-        image: argoproj/rollouts-demo:green
+        image: argoproj/rollouts-demo:yellow
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
