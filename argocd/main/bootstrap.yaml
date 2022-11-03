@@ -26,6 +26,19 @@ spec:
   - https://github.com/lalotone/stackops
 ---
 apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: bluegreen
+  namespace: argocd
+spec:
+  description: Test project for Blue-Green
+  destinations:
+  - namespace: bluegreen
+    server: https://kubernetes.default.svc
+  sourceRepos:
+  - https://github.com/lalotone/stackops
+---
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   labels:
@@ -61,5 +74,25 @@ spec:
       prune: true
   source:
     path: argocd/jobs_testing/kustomize/overlays/dev
+    repoURL: https://github.com/lalotone/stackops
+    targetRevision: main
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    test: "true"
+  name: bluegreen
+  namespace: argocd
+spec:
+  destination:
+    namespace: bluegreen
+    server: https://kubernetes.default.svc
+  project: bluegreen
+  syncPolicy:
+    automated:
+      prune: true
+  source:
+    path: argocd/bluegreen
     repoURL: https://github.com/lalotone/stackops
     targetRevision: main
